@@ -1,0 +1,26 @@
+{
+  "name": "mock-data-forge",
+  "version": "1.0.0",
+  "description": "Deterministic fake data generator API — seeded, schema-driven, zero deps",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["mock", "fake-data", "testing", "api", "seeded"],
+  "author": "v01dst",
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^5.12.1",
+    "tsx": "^4.23.13"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}
