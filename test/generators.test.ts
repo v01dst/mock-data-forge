@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { hashSeed, makeRand } from "../src/rand.js";
-import { makeOrders, makePosts, makeUsers } from "../src/generators.js";
+import { makeCompanies, makeOrders, makePosts, makeUsers } from "../src/generators.js";
 
 describe("rand", () => {
   it("is deterministic for the same seed", () => {
@@ -78,6 +78,20 @@ describe("generators", () => {
     for (const p of posts) {
       expect(p.slug).toMatch(/^[a-z0-9-]+$/);
       expect(p.slug).not.toContain("--");
+    }
+  });
+});
+
+describe("companies generator", () => {
+  it("same seed produces identical companies", () => {
+    expect(makeCompanies("demo", 5)).toEqual(makeCompanies("demo", 5));
+  });
+
+  it("revenue derives from employees", () => {
+    for (const c of makeCompanies("rev", 30)) {
+      expect(c.revenueUsd).toBeGreaterThanOrEqual(c.employees * 50_000);
+      expect(c.revenueUsd).toBeLessThanOrEqual(c.employees * 400_000);
+      expect(c.employees).toBeGreaterThanOrEqual(5);
     }
   });
 });

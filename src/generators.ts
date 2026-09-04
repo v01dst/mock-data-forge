@@ -139,3 +139,41 @@ export function makePosts(seed: Seed, count: number): MockPost[] {
   const r = makeRand(toSeed(seed));
   return Array.from({ length: count }, (_, i) => makePost(r, i));
 }
+
+export interface MockCompany {
+  id: string;
+  name: string;
+  domain: string;
+  industry: string;
+  employees: number;
+  revenueUsd: number;
+  founded: number;
+  country: string;
+  publiclyTraded: boolean;
+}
+
+const COMPANY_PREFIX = ["Nova", "Apex", "Vertex", "Quantum", "Blue", "Iron", "Cedar", "Lumen", "Atlas", "Orbit"];
+const COMPANY_SUFFIX = ["Labs", "Systems", "Digital", "Works", "Group", "Dynamics", "Studio", "Networks"];
+const INDUSTRIES = ["software", "fintech", "healthcare", "logistics", "energy", "retail", "media", "education"];
+const COUNTRIES = ["US", "DE", "GB", "FR", "CA", "AU", "JP", "NL"];
+
+export function makeCompany(r: Rand, index: number): MockCompany {
+  const name = `${r.pick(COMPANY_PREFIX)}${r.pick(COMPANY_SUFFIX)}`;
+  const employees = r.int(5, 50000);
+  return {
+    id: `CMP-${pad(index + 1, 6)}`,
+    name,
+    domain: `${name.toLowerCase()}.${r.pick(["com", "io", "dev", "net"])}`,
+    industry: r.pick(INDUSTRIES),
+    employees,
+    revenueUsd: employees * r.int(50_000, 400_000),
+    founded: r.int(1950, 2024),
+    country: r.pick(COUNTRIES),
+    publiclyTraded: r.bool(0.35),
+  };
+}
+
+export function makeCompanies(seed: Seed, count: number): MockCompany[] {
+  const r = makeRand(toSeed(seed));
+  return Array.from({ length: count }, (_, i) => makeCompany(r, i));
+}

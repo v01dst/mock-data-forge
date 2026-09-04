@@ -55,3 +55,13 @@ describe("meta", () => {
     expect(res.json().service).toBe("mock-data-forge");
   });
 });
+
+describe("GET /companies", () => {
+  it("returns seeded companies", async () => {
+    const a = await app.inject({ url: "/companies", query: { seed: "s", count: "3" } });
+    const b = await app.inject({ url: "/companies", query: { seed: "s", count: "3" } });
+    expect(a.statusCode).toBe(200);
+    expect(a.json()).toEqual(b.json());
+    expect(a.json().companies).toHaveLength(3);
+  });
+});
