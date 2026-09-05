@@ -65,3 +65,13 @@ describe("GET /companies", () => {
     expect(a.json().companies).toHaveLength(3);
   });
 });
+
+describe("GET /payments", () => {
+  it("returns seeded payments", async () => {
+    const a = await app.inject({ url: "/payments", query: { seed: "s", count: "4" } });
+    const b = await app.inject({ url: "/payments", query: { seed: "s", count: "4" } });
+    expect(a.statusCode).toBe(200);
+    expect(a.json()).toEqual(b.json());
+    expect(a.json().payments).toHaveLength(4);
+  });
+});

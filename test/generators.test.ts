@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { hashSeed, makeRand } from "../src/rand.js";
-import { makeCompanies, makeOrders, makePosts, makeUsers } from "../src/generators.js";
+import { makeCompanies, makeOrders, makePayments, makePosts, makeUsers } from "../src/generators.js";
 
 describe("rand", () => {
   it("is deterministic for the same seed", () => {
@@ -92,6 +92,27 @@ describe("companies generator", () => {
       expect(c.revenueUsd).toBeGreaterThanOrEqual(c.employees * 50_000);
       expect(c.revenueUsd).toBeLessThanOrEqual(c.employees * 400_000);
       expect(c.employees).toBeGreaterThanOrEqual(5);
+    }
+  });
+});
+
+describe("payments generator", () => {
+  it("same seed produces identical payments", () => {
+    expect(makePayments("demo", 5)).toEqual(makePayments("demo", 5));
+  });
+
+  it("net equals amount minus fee", () => {
+    for (const p of makePayments("math", 40)) {
+      expect(p.netUsd).toBeCloseTo(p.amountUsd - p.feeUsd, 2);
+      expect(p.feeUsd).toBeLessThan(p.amountUsd * 0.04);
+    }
+  });
+
+  it("pending payments have no processedAt", () => {
+    const payments = makePayments("pending", 60);
+    for (const p of payments) {
+      if (p.status === "pending") expect(p.processedAt).toBeNull();
+      else expect(p.processedAt).toBeTruthy();
     }
   });
 });

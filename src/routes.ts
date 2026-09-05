@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { hashSeed } from "./rand.js";
-import { makeCompanies, makeOrders, makePosts, makeUsers } from "./generators.js";
+import { makeCompanies, makeOrders, makePayments, makePosts, makeUsers } from "./generators.js";
 
 export interface ForgeRoutesOpts {
   maxItems: number;
@@ -133,6 +133,22 @@ export function forgeRoutes(app: FastifyInstance, opts: ForgeRoutesOpts): void {
       const seed = q.seed ?? String(resolveSeed(undefined, "companies"));
       const companies = makeCompanies(seed, count);
       return reply.status(200).send({ seed, count, companies });
+    }
+  );
+
+  app.get(
+    "/payments",
+    async (request, reply) => {
+      const q = request.query as Record<string, string>;
+      const count = clampCount(q.count);
+      if (count === null) {
+        return reply
+          .status(400)
+          .send({ error: `count must be an integer between 1 and ${opts.maxItems}` });
+      }
+      const seed = q.seed ?? String(resolveSeed(undefined, "payments"));
+      const payments = makePayments(seed, count);
+      return reply.status(200).send({ seed, count, payments });
     }
   );
 }

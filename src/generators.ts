@@ -177,3 +177,44 @@ export function makeCompanies(seed: Seed, count: number): MockCompany[] {
   const r = makeRand(toSeed(seed));
   return Array.from({ length: count }, (_, i) => makeCompany(r, i));
 }
+
+export interface MockPayment {
+  id: string;
+  orderId: string;
+  method: "card" | "paypal" | "bank_transfer" | "crypto";
+  status: "pending" | "completed" | "refunded" | "failed";
+  amountUsd: number;
+  feeUsd: number;
+  netUsd: number;
+  currency: string;
+  processedAt: string | null;
+}
+
+const METHODS = ["card", "paypal", "bank_transfer", "crypto"] as const;
+const PAY_STATUSES = ["pending", "completed", "refunded", "failed"] as const;
+const CURRENCIES = ["USD", "EUR", "GBP", "JPY"];
+
+export function makePayment(r: Rand, index: number): MockPayment {
+  const amount = r.int(500, 250000);
+  const fee = Math.round(amount * (r.int(15, 35) / 1000));
+  const status = r.pick(PAY_STATUSES);
+  return {
+    id: `PAY-${pad(index + 1, 8)}`,
+    orderId: `ORD-${pad(r.int(1, 500), 8)}`,
+    method: r.pick(METHODS),
+    status,
+    amountUsd: amount / 100,
+    feeUsd: fee / 100,
+    netUsd: (amount - fee) / 100,
+    currency: r.pick(CURRENCIES),
+    processedAt:
+      status === "pending"
+        ? null
+        : new Date(Date.UTC(2025, 0, 1) + r.int(0, 365 * 24 * 3600 * 1000)).toISOString(),
+  };
+}
+
+export function makePayments(seed: Seed, count: number): MockPayment[] {
+  const r = makeRand(toSeed(seed));
+  return Array.from({ length: count }, (_, i) => makePayment(r, i));
+}
